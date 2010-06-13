@@ -3,7 +3,7 @@ $tables = array(
   'liberty_secure_permissions_map' => "
 	perm_name C(30) PRIMARY,
 	perm_type C(30) PRIMARY,
-	content_type_guid C(16) PRIMARY
+	content_type_guid C(32) PRIMARY
 		CONSTRAINT ', CONSTRAINT `libertysecure_perm_name_ref` FOREIGN KEY (`perm_name`) REFERENCES `".BIT_DB_PREFIX."users_permissions`( `perm_name` )
 					, CONSTRAINT `libertysecure_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )'
   "
@@ -22,5 +22,5 @@ $gBitInstaller->registerPackageInfo( LIBERTYSECURE_PKG_NAME, array(
 
 // Requirements
 $gBitInstaller->registerRequirements( LIBERTYSECURE_PKG_NAME, array(
-    'liberty' => array( 'min' => '2.1.0' ),
+    'liberty' => array( 'min' => '2.1.5' ),
 ));
