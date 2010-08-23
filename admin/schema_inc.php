@@ -1,4 +1,22 @@
 <?php
+
+global $gBitSystem;
+
+$gBitSystem->registerPackageInfo( LIBERTYSECURE_PKG_NAME, array(
+	'description' => "This package secures liberty content list queries when using custom content permissions. This package is required to use custom content permissions.",
+	'license' => '<a href="http://www.gnu.org/licenses/licenses.html#LGPL">LGPL</a>',
+) );
+
+// Requirements
+$gBitSystem->registerRequirements( LIBERTYSECURE_PKG_NAME, array(
+    'liberty' => array( 'min' => '2.1.5' ),
+));
+
+
+// Install process
+global $gBitInstaller;
+if( is_object( $gBitInstaller ) ){
+
 $tables = array(
   'liberty_secure_permissions_map' => "
 	perm_name C(30) PRIMARY,
@@ -15,12 +33,4 @@ foreach( array_keys( $tables ) AS $tableName ) {
 	$gBitInstaller->registerSchemaTable( LIBERTYSECURE_PKG_NAME, $tableName, $tables[$tableName] );
 }
 
-$gBitInstaller->registerPackageInfo( LIBERTYSECURE_PKG_NAME, array(
-	'description' => "This package secures liberty content list queries when using custom content permissions. This package is required to use custom content permissions.",
-	'license' => '<a href="http://www.gnu.org/licenses/licenses.html#LGPL">LGPL</a>',
-) );
-
-// Requirements
-$gBitInstaller->registerRequirements( LIBERTYSECURE_PKG_NAME, array(
-    'liberty' => array( 'min' => '2.1.5' ),
-));
+}
