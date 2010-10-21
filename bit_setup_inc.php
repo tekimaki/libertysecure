@@ -6,6 +6,7 @@ $registerHash = array(
 );
 $gBitSystem->registerPackage( $registerHash );
 
+/*
 if( $gBitSystem->isPackageActive( 'libertysecure' ) ) {
 	require_once( LIBERTYSECURE_PKG_PATH.'libertysecure_lib.php' );
 
@@ -13,4 +14,4 @@ if( $gBitSystem->isPackageActive( 'libertysecure' ) ) {
 		'content_list_sql_function' => 'secure_content_list_sql',
 	) );
 }
-?>
+*/

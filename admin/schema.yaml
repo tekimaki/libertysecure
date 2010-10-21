@@ -23,4 +23,11 @@ libertysecure:
       content_type_guid C(32) PRIMARY
       CONSTRAINT ', CONSTRAINT `libertysecure_perm_name_ref` FOREIGN KEY (`perm_name`) REFERENCES `users_permissions`( `perm_name` )
       , CONSTRAINT `libertysecure_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `liberty_content_types`( `content_type_guid` )'
-      
+
+  plugins:
+    liberty_secure:
+      required: true
+      handler_file: libertysecure_lib.php 
+      api_handlers:
+        sql:
+          content_list_sql: secure_content_list_sql
