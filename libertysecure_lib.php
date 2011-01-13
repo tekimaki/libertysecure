@@ -14,7 +14,7 @@ function secure_register_permissions(){
 	global $gBitSystem, $gLibertySystem;
 
 	// these are the common basic permission types across packages
-	$permissionTypes = array('view', 'create', 'update', 'admin');
+	$permissionTypes = array( 'mViewContentPerm', 'mListViewContentPerm', 'mCreateContentPerm', 'mUpdateContentPerm', 'mAdminContentPerm' );
 
 	// dump all perms in liberty_secure_permissions_map table
 	$gBitSystem->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_secure_permissions_map`" );
@@ -25,8 +25,7 @@ function secure_register_permissions(){
 			require_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
 			$class = $type['handler_class'];
 			$content = new $class();
-			foreach( $permissionTypes as $perm ){
-				$contentPerm = "m".ucfirst($perm)."ContentPerm";
+			foreach( $permissionTypes as $contentPerm ){
 				// get default perms. Skip packages with defulat p_admin bs.
 				if ( isset( $content->$contentPerm )  && isset( $content->mType['content_type_guid'] ) && $content->$contentPerm != 'p_admin_content' ){
 					$bindVars = array();
