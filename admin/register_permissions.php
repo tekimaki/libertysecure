@@ -7,6 +7,7 @@ $gBitSystem->verifyPermission( 'p_admin' );
  * then it will then reload them all in.
  */
 if( !empty( $_REQUEST['register_perms'] ) ) {
+	require_once( '../libertysecure_lib.php' );
 	secure_register_permissions();
 	// @TODO would be nice to have a way to get errors.
 	/*
