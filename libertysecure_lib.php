@@ -65,14 +65,19 @@ function secure_content_list_sql( &$pObject, $pParamHash=NULL ) {
 			// $ret['select_sql'] = ", lcpm.`perm_name` AS lc_sec_target, lcpermgrnt.`perm_name` as lc_sec_grant, lcpermrev.`is_revoked` as lc_sec_revoke, ugpgc.`perm_name` AS lc_sec_default ";
 
 			$ret['join_sql'] =
-				// Get the permission name we need to target from here
-				" LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_secure_permissions_map` lcpm ON ( lcpm.`content_type_guid` = lc.`content_type_guid` AND lcpm.`perm_type` = 'view' )".
-				// Check if a group is allowed by default
-				" LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugpgc ON (ugpgc.`perm_name` = lcpm.`perm_name` AND ugpgc.`group_id` IN (".implode(',', $groups) .") )".
+				// Get the permission name we need to target from here - check if a group is allowed by default
+				// Need to select for the permission name from all related groups then join on those results, joining directly can result in dupe rows
+				" LEFT OUTER JOIN (
+					SELECT DISTINCT( ls_lcpm.perm_name ), ls_lcpm.content_type_guid
+						FROM `".BIT_DB_PREFIX."liberty_secure_permissions_map` ls_lcpm
+						INNER JOIN `".BIT_DB_PREFIX."users_group_permissions` ls_ugp ON ( ls_ugp.`perm_name` = ls_lcpm.`perm_name` )
+						AND ls_lcpm.`perm_type` = 'view'
+						AND ls_ugp.group_id IN ( ".implode(',', $groups) .") 
+					) ugpgc ON ( ugpgc.`content_type_guid` = lc.`content_type_guid` )".
 				// Check if the permission is granted
-				" LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcpermgrnt ON (lc.`content_id` = lcpermgrnt.`content_id` AND lcpermgrnt.`perm_name` = lcpm.`perm_name` AND  lcpermgrnt.`group_id` IN (".implode(',', $groups) .") AND lcpermgrnt.`is_revoked` IS NULL )".
+				" LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcpermgrnt ON (lc.`content_id` = lcpermgrnt.`content_id` AND lcpermgrnt.`perm_name` = ugpgc.`perm_name` AND  lcpermgrnt.`group_id` IN (".implode(',', $groups) .") AND lcpermgrnt.`is_revoked` IS NULL )".
 				// Make sure the permission hasn't been revoked
-				" LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcpermrev ON (lc.`content_id` = lcpermrev.`content_id` AND lcpermrev.`perm_name` = lcpm.`perm_name` AND lcpermrev.`group_id` IN (".implode(',', $groups) .") AND lcpermrev.`is_revoked` = 'y' )";
+				" LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcpermrev ON (lc.`content_id` = lcpermrev.`content_id` AND lcpermrev.`perm_name` = ugpgc.`perm_name` AND lcpermrev.`group_id` IN (".implode(',', $groups) .") AND lcpermrev.`is_revoked` = 'y' )";
 
 			$ret['bind_vars'] = array( $gBitUser->mUserId );
 
